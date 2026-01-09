@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfiTech Report System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@400;500;700&family=Times+New+Roman:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="brand-header">
+            <div class="brand-logo">INFITECH<span>CREATIVES</span></div>
+            <div class="brand-tagline">Advanced Result Processing System</div>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <h3>REPORT GENERATION DASHBOARD</h3>
+                <p>Select class to download template, then upload filled data.</p>
+            </div>
+            
+            <div class="download-section">
+                <label>Select Class for Template:</label>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 5px;">
+                    <select id="classTemplateSelect" class="template-select">
+                        <option value="PLAY">PLAY Group</option>
+                        <option value="LKG_UKG">LKG / UKG</option>
+                        <option value="CLASS_1">Class I</option>
+                        <option value="CLASS_2">Class II</option>
+                        <option value="CLASS_3_5">Class III / IV / V</option>
+                        <option value="CLASS_6_8">Class VI / VII / VIII</option>
+                    </select>
+                    <button class="btn-template" onclick="downloadTemplate()">
+                        📥 Download Excel
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group"> 
+                    <label>1. Front Page Logo (Main)</label> 
+                    <input type="file" id="frontLogoInput" accept="image/*"> 
+                </div>
+                <div class="input-group"> 
+                    <label>2. Back Page Logo (Watermark)</label> 
+                    <input type="file" id="backLogoInput" accept="image/*"> 
+                </div>
+                <div class="input-group"> 
+                    <label>3. Upload Filled Excel</label> 
+                    <input type="file" id="excelInput" accept=".xlsx, .xls"> 
+                </div>
+                <div class="input-group"> 
+                    <label>4. Student Photos (RollNo.jpg)</label> 
+                    <input type="file" id="photosInput" multiple accept="image/*"> 
+                </div>
+                <div class="input-group full-width"> 
+                    <label>5. Front Page Border (A4 PNG - Optional)</label> 
+                    <input type="file" id="frontBorderInput" accept="image/*"> 
+                </div>
+                
+                <div class="section-title full-width">Digital Signatures (Optional)</div>
+                
+                <div class="input-group"> 
+                    <label>Class Teacher Sign</label> 
+                    <input type="file" id="sign1Input" accept="image/*"> 
+                </div>
+                <div class="input-group"> 
+                    <label>Checked By Sign</label> 
+                    <input type="file" id="sign2Input" accept="image/*"> 
+                </div>
+                <div class="input-group"> 
+                    <label>Principal Sign</label> 
+                    <input type="file" id="sign3Input" accept="image/*"> 
+                </div>
+
+                <div class="input-group full-width"> 
+                    <label>Session Year</label> 
+                    <input type="text" id="sessionInput" value="2025-26"> 
+                </div>
+            </div>
+
+            <button class="btn-generate" onclick="generateReportCards()">Generate Result Cards</button>
+
+            <div class="instruction-box">
+                <h4>🚀 Quick Instructions:</h4>
+                <ul>
+                    <li><b>Step 1:</b> Select Class and click "Download Excel".</li>
+                    <li><b>Step 2:</b> Fill student data in Excel. (Note: DOB column is removed).</li>
+                    <li><b>Step 3:</b> Upload Logos and filled Excel file.</li>
+                    <li><b>Step 4:</b> Upload Photos renamed as <b>RollNo.jpg</b>.</li>
+                    <li><b>Step 5:</b> Click "Generate Result Cards".</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-credit">
+            Powered by <strong>InfiTech Creatives</strong> &copy; 2025 | All Rights Reserved
+        </div>
+    </div>
+
+    <div id="preview-controls">
+        <div class="pc-title">PREVIEW MODE</div>
+        <div class="pc-buttons"> 
+            <button class="pc-btn back" onclick="location.reload()">Back / Reset</button> 
+            <button class="pc-btn print" onclick="window.print()">Print / Save PDF</button> 
+        </div>
+    </div>
+
+    <div id="output-area"></div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
