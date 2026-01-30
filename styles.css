@@ -375,7 +375,7 @@ body {
   height: 180px;
   width: auto;
   object-fit: contain;
-  margin-top: 20px;
+  margin-bottom: 20px;
   filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.1));
 }
 
@@ -384,18 +384,18 @@ body {
   font-family: "Times New Roman", serif;
   font-style: italic;
   color: #333;
-  margin-bottom: 15px;
+  margin: 15px 0;
   border-bottom: 3px solid #0d47a1;
   display: inline-block;
   padding: 0 50px 10px 50px;
 }
 
 .student-photo-frame {
-  width: 140px;
+  width: 160px;
   height: 190px;
-  border: 3px solid #0d47a1;
+  border: 4px solid #0d47a1;
   padding: 4px;
-  margin: 15px auto;
+  margin: 20px auto;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -408,12 +408,12 @@ body {
 }
 
 .profile-box {
-  width: 80%;
-  margin: 10px auto;
+  width: 90%;
+  margin: 20px auto;
   border: 2px solid #0d47a1;
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.95);
-  padding: 10px;
+  padding: 15px;
   box-shadow: 0 5px 15px rgba(13, 71, 161, 0.15);
 }
 .profile-table {
@@ -434,18 +434,18 @@ body {
 .profile-table td:first-child {
   font-weight: 700;
   color: #0d47a1;
-  width: 45%;
+  width: 35%;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .front-footer {
-  margin: 20px 0px;
-  font-size: 20px;
+  margin-top: 40px;
+  font-size: 16px;
   font-weight: 600;
   color: #444;
   padding: 0 40px;
-  line-height: 1.5;
+  line-height: 1.6;
   font-style: italic;
 }
 
@@ -498,9 +498,9 @@ body {
 }
 .marks-header-table td {
   border: 1px solid #0d47a1;
-  padding: 5px 15px;
+  padding: 10px 15px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .marks-table {
@@ -515,13 +515,13 @@ body {
   background: #90caf9;
   color: #000;
   border: 1px solid #555;
-  padding: 2px 4px;
+  padding: 8px 4px;
   vertical-align: middle;
   line-height: 1.2;
 }
 .marks-table td {
   border: 1px solid #555;
-  padding: 5px 4px;
+  padding: 6px 4px;
 }
 .marks-table .sub-name {
   text-align: left;
@@ -543,7 +543,7 @@ body {
 }
 
 .footer-info {
-  margin-top: 5px;
+  margin-top: 15px;
   border: 1px solid #000;
   padding: 10px;
   background: #f9f9f9;
@@ -558,14 +558,14 @@ body {
 .footer-row {
   display: flex;
   justify-content: space-between;
-  padding: 3px 0;
+  padding: 4px 0;
   border-bottom: 1px dotted #ccc;
 }
 
 .signatures {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 50px;
   align-items: flex-end;
   padding: 0 15px;
 }
@@ -573,7 +573,7 @@ body {
   text-align: center;
   width: 180px;
   position: relative;
-  height: 70px;
+  height: 80px;
 }
 .sign-img {
   height: 60px;
@@ -583,16 +583,6 @@ body {
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-}
-.pri-img {
-  height: 60px;
-  width: auto;
-  position: absolute;
-  bottom: 25px !important;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-
 }
 .sign-line {
   border-top: 2px solid #000;

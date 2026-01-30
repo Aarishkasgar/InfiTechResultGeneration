@@ -7,7 +7,6 @@ let sign1Src = "";
 let sign2Src = "";
 let sign3Src = "";
 
-// Subject Configurations per Class
 const SUBJECT_MAP = {
     "PLAY": ["Hindi", "English", "Maths", "Urdu", "Deeniyat", "Poem", "P.T / Hygiene"],
     "LKG_UKG": ["Hindi", "English", "Maths", "Urdu", "Art", "Deeniyat", "Poem", "P.T / Hygiene"],
@@ -17,17 +16,16 @@ const SUBJECT_MAP = {
     "CLASS_6_8": ["Hindi", "English", "Maths", "Urdu", "Science", "S.S.T", "Computer", "Art", "General Knowledge", "Conversation", "Deeniyat", "P.T / Hygiene"]
 };
 
-// Template Downloader
+// 1. Template Downloader (Removed Rank & Remarks from Template)
 function downloadTemplate() {
     const selectedClass = document.getElementById('classTemplateSelect').value;
     const subjects = SUBJECT_MAP[selectedClass];
 
-    // Common Headers (No DOB)
+    // Added "PromotedTo" but removed Rank/Remarks/Conduct as they are auto-generated
     let headers = [
-        "SrNo", "RollNo", "Name", "FatherName", "MotherName", "Class", "Address", "Attendance", "Remarks", "PromotedTo", "Rank"
+        "SrNo", "RollNo", "Name", "FatherName", "MotherName", "Class", "Address", "Attendance", "PromotedTo"
     ];
 
-    // Add Subjects
     subjects.forEach(sub => {
         headers.push(`${sub}_FA1`, `${sub}_SA1`, `${sub}_FA2`, `${sub}_SA2`);
     });
@@ -36,6 +34,23 @@ function downloadTemplate() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, `${selectedClass}_Result`);
     XLSX.writeFile(wb, `InfiTech_${selectedClass}_Format.xlsx`);
+}
+
+// 2. Helpers for Auto-Calculation
+function calculateRemarks(percentage) {
+    if (percentage >= 90) return "Outstanding";
+    if (percentage >= 80) return "Excellent";
+    if (percentage >= 70) return "Very Good";
+    if (percentage >= 60) return "Good";
+    if (percentage >= 50) return "Average";
+    if (percentage >= 40) return "Pass";
+    return "Need Improvement";
+}
+
+function calculateConduct(percentage) {
+    if (percentage >= 80) return "Excellent";
+    if (percentage >= 60) return "Good";
+    return "Satisfactory";
 }
 
 // Image Loaders
@@ -83,6 +98,41 @@ function generateReportCards() {
     if(!backLogoSrc && frontLogoSrc) backLogoSrc = frontLogoSrc;
     if(!frontLogoSrc && backLogoSrc) frontLogoSrc = backLogoSrc;
 
+    // --- STEP 1: Calculate Percentage for All Students First ---
+    excelData.forEach(student => {
+        let subjects = [];
+        Object.keys(student).forEach(key => {
+            if (key.endsWith('_FA1')) subjects.push(key.replace('_FA1', ''));
+        });
+
+        let totalObtained = 0;
+        let totalMax = 0;
+
+        subjects.forEach(sub => {
+            let fa1 = parseFloat(student[`${sub}_FA1`]) || 0;
+            let sa1 = parseFloat(student[`${sub}_SA1`]) || 0;
+            let fa2 = parseFloat(student[`${sub}_FA2`]) || 0;
+            let sa2 = parseFloat(student[`${sub}_SA2`]) || 0;
+            totalObtained += (fa1 + sa1 + fa2 + sa2);
+            totalMax += 200; // Assuming 200 per subject
+        });
+
+        student.calcPercentage = totalMax > 0 ? (totalObtained / totalMax) * 100 : 0;
+    });
+
+    // --- STEP 2: Sort by Percentage for Ranking ---
+    excelData.sort((a, b) => b.calcPercentage - a.calcPercentage);
+
+    // --- STEP 3: Assign Ranks ---
+    let currentRank = 1;
+    for (let i = 0; i < excelData.length; i++) {
+        if (i > 0 && excelData[i].calcPercentage < excelData[i-1].calcPercentage) {
+            currentRank = i + 1;
+        }
+        excelData[i].autoRank = currentRank;
+    }
+
+    // --- STEP 4: Generate HTML ---
     document.getElementById('ui-container').style.display = 'none';
     document.getElementById('preview-controls').style.display = 'flex';
     document.getElementById('output-area').style.display = 'block';
@@ -92,16 +142,10 @@ function generateReportCards() {
     output.innerHTML = ""; 
 
     excelData.forEach(student => {
-        // Detect Subjects from Excel Column Names (Ending with _FA1)
         let subjects = [];
         Object.keys(student).forEach(key => {
-            if (key.endsWith('_FA1')) {
-                subjects.push(key.replace('_FA1', ''));
-            }
+            if (key.endsWith('_FA1')) subjects.push(key.replace('_FA1', ''));
         });
-
-        // Ensure subjects follow the order in Excel if possible, or mapping
-        // The loop above gets them in order of Excel columns usually.
 
         let rowsHTML = "";
         let subCount = 0;
@@ -147,8 +191,12 @@ function generateReportCards() {
         let max_term = subCount * 100;
         let max_grand_total = subCount * 200;
 
-        let percent = max_grand_total > 0 ? ((sum_grand / max_grand_total) * 100).toFixed(2) : 0;
+        // Use Auto-Calculated Values
+        let percent = student.calcPercentage.toFixed(2);
         let resultStatus = percent > 33 ? "Passed" : "Failed";
+        let remarks = calculateRemarks(student.calcPercentage);
+        let conduct = calculateConduct(student.calcPercentage);
+        let rank = student.autoRank;
         
         let photoSrc = studentPhotos[student.RollNo] || "https://via.placeholder.com/150?text=No+Photo";
         let frontImgTag = frontLogoSrc ? `<img src="${frontLogoSrc}" class="big-front-logo">` : '<h2>LOGO</h2>';
@@ -164,7 +212,7 @@ function generateReportCards() {
 
         let s1 = sign1Src ? `<img src="${sign1Src}" class="sign-img">` : '';
         let s2 = sign2Src ? `<img src="${sign2Src}" class="sign-img">` : '';
-        let s3 = sign3Src ? `<img src="${sign3Src}" class="sign-img pri-img">` : '';
+        let s3 = sign3Src ? `<img src="${sign3Src}" class="sign-img">` : '';
 
         let backHeaderHTML = `
             <div class="back-header-row">
@@ -271,7 +319,7 @@ function generateReportCards() {
                 <div style="text-align:center; font-weight:bold; color:#d32f2f; margin-bottom:5px;">Evaluation Point</div>
                 <div class="footer-grid">
                     <div style="border-right: 1px solid #ccc; padding-right: 15px;">
-                        <div class="footer-row"><span>Remarks:</span> <b>${student.Remarks || 'Very Good'}</b></div>
+                        <div class="footer-row"><span>Remarks:</span> <b>${remarks}</b></div>
                         <div class="footer-row"><span>Promoted to class:</span> <b>${student.PromotedTo || 'Next Class'}</b></div>
                         <div class="footer-row"><span>Result:</span> <b>${resultStatus}</b></div>
                         <div class="footer-row"><span>Percentage:</span> <b>${percent}%</b></div>
@@ -279,8 +327,8 @@ function generateReportCards() {
                     <div style="padding-left: 15px;">
                         <div class="footer-row"><span>Grace:</span> <b>-</b></div>
                         <div class="footer-row"><span>Attendance:</span> <b>${student.Attendance || '-'}</b></div>
-                        <div class="footer-row"><span>Conduct:</span> <b>Good</b></div>
-                        <div class="footer-row"><span>Rank:</span> <b>${student.Rank || '-'}</b></div>
+                        <div class="footer-row"><span>Conduct:</span> <b>${conduct}</b></div>
+                        <div class="footer-row"><span>Rank:</span> <b>${rank}</b></div>
                     </div>
                 </div>
             </div>
